@@ -1,0 +1,32 @@
+using Microsoft.EntityFrameworkCore;
+
+public class HospitalContext : DbContext
+{
+    public DbSet<Patient> Patients { get; set; }
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<Reception> Receptions { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<TypeOfPost> TypeOfPosts { get; set; }
+    public DbSet<Cabinet> Cabinets { get; set; }
+    
+    public HospitalContext(DbContextOptions<HospitalContext> options) : base(options)
+    {
+
+    }
+
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        
+        configurationBuilder.Properties<DateOnly>()
+        .HaveConversion<DateOnlyConverter>()
+        .HaveColumnType("date");
+
+        configurationBuilder.Properties<TimeOnly>()
+        .HaveConversion<TimeOnlyConverter>()
+        .HaveColumnType("time");
+
+    }
+
+}
