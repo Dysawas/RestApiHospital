@@ -10,12 +10,21 @@ public class EmployeeRepository
 
     public async Task<IEnumerable<Employee>> GetEmployees()
     {
-        return await _db.Employees.Include(e => e.Post).Include(e => e.Cabinet).ToListAsync();
+        return await _db.Employees
+        .Include(e => e.Cabinet)
+        .Include(e => e.Post)
+        .ThenInclude(p => p.TypeOfPost)
+        .ToListAsync();
     }
 
     public async Task<Employee> GetEmployee(int id)
     {
-        var employee = await _db.Employees.FindAsync(id) ?? throw new Exception("Employee not found");
+        var employee = await _db.Employees
+        .Include(e => e.Cabinet)
+        .Include(e => e.Post)
+        .ThenInclude(p => p.TypeOfPost)
+        .FirstOrDefaultAsync(e => e.EmployeeId == id) 
+        ?? throw new Exception("Employee not found");
         return employee;
     }
 
@@ -35,7 +44,11 @@ public class EmployeeRepository
         };
 
         var foundEmployee = await _db.Employees.AddAsync(employeeFromClient);
+
         await _db.SaveChangesAsync();
+
+        foundEmployee.Reference(e => e.Post).Query().Include(p => p.TypeOfPost).Load();
+        foundEmployee.Reference(e => e.Cabinet).Load();
         return foundEmployee.Entity;
     }
 
@@ -61,13 +74,19 @@ public class EmployeeRepository
 
     public async Task<Employee> DeleteEmployee(int id)
     {
-        var foundEmployee = await _db.Employees.FindAsync(id);
+        var foundEmployee = await _db.Employees
+        .Include(e => e.Cabinet)
+        .Include(e => e.Post)
+        .ThenInclude(p => p.TypeOfPost)
+        .FirstOrDefaultAsync(e => e.EmployeeId == id);
+
         if (foundEmployee != null)
         {
             _db.Employees.Remove(foundEmployee);
             await _db.SaveChangesAsync();
             return foundEmployee;
         }
+        
         throw new Exception("Error deleting data");
     }
 }

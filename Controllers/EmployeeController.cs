@@ -51,10 +51,10 @@ public class EmployeeController : ControllerBase
             var createdEmployee = await _repository.AddEmployee(employee);
             return CreatedAtAction(nameof(Get), new {id = employee.EmployeeId}, createdEmployee);
         }
-        catch (Exception)
+        catch (Exception error)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
-                "Error creating new employee record");
+                error.Message);
         }
     }
 
