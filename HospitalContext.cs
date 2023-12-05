@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-public class HospitalContext : DbContext
+public class HospitalContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Employee> Employees { get; set; }
@@ -17,7 +18,7 @@ public class HospitalContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        
-
+        base.OnModelCreating(modelBuilder);
     }
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

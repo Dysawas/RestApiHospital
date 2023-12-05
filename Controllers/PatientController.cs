@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using System.Security.AccessControl;
 using System.Web.Http.Cors;
 
 
-
+[Authorize(Roles = UserRoles.Admin)]
 [Route("api/patients")]
 [ApiController]
 public class PatientController : ControllerBase
@@ -65,7 +66,7 @@ public class PatientController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Patient>> Put(int id, Patient patient)
+    public async Task<ActionResult<Patient>> Put(int id, [FromBody] Patient patient)
     {
         if (id != patient.PatientId)
                 return BadRequest("Patient ID mismatch");

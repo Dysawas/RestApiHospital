@@ -54,7 +54,12 @@ public class EmployeeRepository
 
     public async Task<Employee> UpdateEmployee(int id, Employee employee)
     {
-        var foundEmployee = await _db.Employees.FindAsync(id);
+        var foundEmployee = await _db.Employees
+        .Include(e => e.Cabinet)
+        .Include(e => e.Post)
+        .ThenInclude(p => p.TypeOfPost)
+        .FirstOrDefaultAsync(e => e.EmployeeId == id);;
+        
         if (foundEmployee != null)
         {
             foundEmployee.FirstName = employee.FirstName;

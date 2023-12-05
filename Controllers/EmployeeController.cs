@@ -59,10 +59,10 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Employee>> Put(int id, Employee employee)
+    public async Task<ActionResult<Employee>> Put(int id, [FromBody] Employee employee)
     {
         if (id != employee.EmployeeId)
-                return BadRequest("Patient ID mismatch");
+                return BadRequest("Employee ID mismatch");
         try
         {
             return await _repository.UpdateEmployee(id, employee);
